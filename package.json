@@ -1,0 +1,26 @@
+{
+  "name": "FCC-Nightlife-Coordination",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Theo <theoanderson3@gmail.com> (linkedin.com/in/andersontr15)",
+  "license": "ISC",
+  "dependencies": {
+    "angular-jwt": "^0.1.8",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.15.2",
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "jsonwebtoken": "^7.2.1",
+    "mongoose": "^4.7.4",
+    "morgan": "^1.7.0",
+    "request": "^2.79.0",
+    "request-promise": "^4.1.1",
+    "yelp": "^1.0.2"
+  }
+}
