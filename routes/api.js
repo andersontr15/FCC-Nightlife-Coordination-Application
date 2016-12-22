@@ -3,8 +3,26 @@ let jwt = require('jsonwebtoken');
 let bcrypt = require('bcrypt-nodejs');
 let router = express.Router();
 let User = require('../models/user');
-let Bar = require('../models/bars');
+let Bars = require('../models/bars');
 let Yelp = require('yelp');
+
+router.put('/location/:name', (request, response) => {
+	Bars.findOne({name: request.params.name}, function(err, bar){
+		if(err) {
+			return response.status(400).send(err);
+		};
+		if(!bar) {
+			return response.status(404).send('No bar found with this name');
+		};
+		bar.users.push(request.body.user);
+		bar.save(function(err, res){
+			if(err) {
+				return response.status(400).send(err)
+			}
+			return response.status(201).send(res);
+		});
+	});
+});
 
 
 router.get('/location/:zip', (request, response) => {
@@ -14,14 +32,38 @@ router.get('/location/:zip', (request, response) => {
 	  	token: process.env.token,
 	  	token_secret: process.env.tokenSecret
 	});
-
-	yelp.search({ term: 'bars', location: request.params.zip })
-		.then(function (data) {
-		  return response.status(200).send(data);
-		})
-		.catch(function (err) {
-		  return response.status(400).send(err);
-		});
+	Bars.find({'zipCode': request.params.zip}, function(err, bars){
+		if(err) {
+			console.log('Error fetching bars : ' + err)
+		}
+		if(bars.length === 0) {
+			console.log('no bars');
+			var bars = [];
+			yelp.search({ term: 'bars', location: request.params.zip })
+				.then(function(data) {
+					for(var i = 0; i < data.businesses.length; i++){
+						var bar = new Bars();
+						bar.name = data.businesses[i].name;
+						bar.image_url = data.businesses[i].image_url;
+						bar.zipCode = request.params.zip;
+						bar.save()
+					}
+					data.businesses.forEach(function(business){
+						business.users = []
+					});
+					return response.status(200).send(data);
+				})
+				.catch(function(err) {
+					return response.status(400).send(err);
+				});
+		}
+		else {
+			console.log('bars for ' + request.params.zip + bars);
+			return response.status(200).send({
+				businesses: bars
+			});
+		}
+	})
 });
 
 

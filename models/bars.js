@@ -10,11 +10,13 @@ let barSchema = new Schema({
 		type: String,
 		required: true
 	},
-	image: {
+	image_url: {
 		type: String,
 		required: true
 	},
-	users: [String]
+	users: {
+		type: Array
+	}
 });
 
 let model = mongoose.model('Bar', barSchema);

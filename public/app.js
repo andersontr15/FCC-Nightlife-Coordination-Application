@@ -37,21 +37,6 @@
 		vm.user = null;
 		vm.businesses = [];
 
-		// vm.updateLocation = function() {
-		// 	$http.put('/api/update-location', vm.user)
-		// 		 .then(function(response) {
-		// 		 	vm.user = null;
-		// 		 	$window.localStorage.token = response.data;
-		// 		 	var token = $window.localStorage.token;
-		// 		 	var payload = jwtHelper.decodeToken(token).data;
-		// 			vm.findBars(payload.location);
-		// 			vm.user = payload;
-		// 		 }, function(err) {
-		// 		 	console.log(err)
-		// 		 })
-		// }
-
-
 		vm.logout = function() {
 			delete $window.localStorage.token;
 			vm.user = null;
@@ -59,9 +44,20 @@
 			$location.path('/');
 		}
 
+		vm.attend = function(bar) {
+			console.log(bar, bar.name);
+			$http.put('/api/location/' + bar.name, { user: vm.user })
+				 .then(function(response) {
+				 	vm.findBars(response.data.zipCode);
+				 }, function(err) {
+				 	console.log(err);
+				 })
+		}
+
 		vm.findBars = function(zip) {
 			$http.get('/api/location/' + zip)
 				 .then(function(response) {
+				 	console.log(response);
 				 	vm.businesses = response.data.businesses;
 				 }, function(err) {
 				 	console.log(err)
@@ -135,6 +131,5 @@
 		};
 
 	};
-
 
 }());
