@@ -30,14 +30,26 @@
 
 	app.controller('MainController', MainController);
 
-	function MainController($http, $location, $window, jwtHelper) {
+	function MainController($http, $location, $window, jwtHelper, $scope) {
 
 		var vm = this;
 		vm.title = "MainController";
 		vm.user = null;
 		vm.businesses = [];
 
-
+		// vm.updateLocation = function() {
+		// 	$http.put('/api/update-location', vm.user)
+		// 		 .then(function(response) {
+		// 		 	vm.user = null;
+		// 		 	$window.localStorage.token = response.data;
+		// 		 	var token = $window.localStorage.token;
+		// 		 	var payload = jwtHelper.decodeToken(token).data;
+		// 			vm.findBars(payload.location);
+		// 			vm.user = payload;
+		// 		 }, function(err) {
+		// 		 	console.log(err)
+		// 		 })
+		// }
 
 
 		vm.logout = function() {
@@ -47,16 +59,20 @@
 			$location.path('/');
 		}
 
+		vm.findBars = function(zip) {
+			$http.get('/api/location/' + zip)
+				 .then(function(response) {
+				 	vm.businesses = response.data.businesses;
+				 }, function(err) {
+				 	console.log(err)
+				 })
+		}
+
+
 		vm.isLoggedIn = function() {
 			var token = $window.localStorage.token;
 			if(token === undefined) {
-				var zip = Number(prompt("What is your zip code?"));
-				$http.get('/api/location/' + zip)
-					 .then(function(response) {
-					 	vm.businesses = response.data.businesses;
-					 }, function(err) {
-					 	console.log(err)
-					 })
+				return false;
 			}
 			else if(token && vm.businesses.length < 1) {
 				var payload = jwtHelper.decodeToken(token).data;

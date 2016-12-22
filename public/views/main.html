@@ -1,13 +1,17 @@
-<h3>{{vm.title}}</h3>
 <a href="/login" ng-if="!vm.user">Login</a>
 <a href="/register" ng-if="!vm.user">Register</a>
 <button class="btn btn-link" ng-if="vm.user" ng-click="vm.logout();">Log out</button>
 <h3 ng-if="vm.user">Welcome back, {{vm.user.name}}</h3>
-<h3 ng-if="vm.user">Your location: {{vm.user.location}}</h3>
+<h3 ng-if="vm.user">Your location: {{vm.user.location}}
+</h3>
 <hr>
+<h3 ng-if="!vm.user && vm.businesses.length < 1">
+	<input type="number" ng-model="vm.zipcode" placeholder="your zip code..">
+	<button ng-disabled="!vm.zipcode" class="btn btn-success" ng-click="vm.findBars(vm.zipcode)">Find bars near you..</button>
+</h3>
 <hr>
-<h3 ng-if="vm.businesses.length > 0">Bars near you..</h3>
-<ul style="list-style-type: none;" ng-if="vm.businesses.length > 0">
+<h3 ng-cloak ng-if="vm.businesses.length > 0">Bars near you..</h3>
+<ul style="list-style-type: none;" ng-if="vm.businesses.length > 0" ng-cloak>
 	<li ng-repeat="business in vm.businesses">
 		<h3>{{business.name}}</h3>
 		<h4>{{business.categories[0][0]}}</h4>
