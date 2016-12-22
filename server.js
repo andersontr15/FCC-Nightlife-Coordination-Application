@@ -1,5 +1,5 @@
 const PORT = process.env.PORT || 3000;
-const db = "mongodb://localhost:27017/fcc-nightlife";
+const db = "mongodb://theo:theo@ds143588.mlab.com:43588/heroku_c1bv7qr3";
 let express = require('express');
 let mongoose = require('mongoose');
 let bodyParser = require('body-parser');
