@@ -14,10 +14,14 @@
 <ul style="list-style-type: none;" ng-if="vm.businesses.length > 0" ng-cloak>
 	<li ng-repeat="business in vm.businesses">
 		<h3>{{business.name}}</h3>
+		{{business.zipCode}}
 		<a href="{{business.mobile_url}}" style="cursor: pointer;">
 			<img ng-src="{{business.image_url}}" alt="">
 		</a>
 		<h4>Users going: {{business.users.length}}</h4>
-		<button class="btn btn-success" ng-if="vm.user && !vm.attending" ng-click="vm.attend(business)">Sign up to go</button>
+		<div ng-if="vm.user">
+			<button class="btn btn-primary" ng-click="vm.attend(business)">Attend</button>
+			<button class="btn btn-danger" ng-click="vm.cancel(business)">Cancel</button>
+		</div>
 	</li>
 </ul>

@@ -6,6 +6,33 @@ let User = require('../models/user');
 let Bars = require('../models/bars');
 let Yelp = require('yelp');
 
+router.put('/location/leave/:name', (request, response) => {
+	console.log(request.params.name);
+	Bars.findOne({ name: request.params.name }, function(err, bar) {
+		if(err) {
+			console.log(err);
+			return response.status(400).send(err);
+		}
+		if(!bar) {
+			return response.status(404).send('No bar found with this name');
+		}
+		for(var i = 0; i < bar.users.length; i++){
+			if(bar.users[i].name === request.body.user.name){
+				bar.users.splice(bar.users[i], 1);
+				bar.save(function(err, res) {
+					if(err) {
+						return response.status(400).send(err)
+					}
+					return response.status(204).send(res)
+				})
+			}
+			else {
+				return response.status(404).send('No use removed from bar');
+			}
+		}
+	});
+});
+
 router.put('/location/:name', (request, response) => {
 	Bars.findOne({name: request.params.name}, function(err, bar){
 		if(err) {
@@ -34,10 +61,9 @@ router.get('/location/:zip', (request, response) => {
 	});
 	Bars.find({'zipCode': request.params.zip}, function(err, bars){
 		if(err) {
-			console.log('Error fetching bars : ' + err)
+			return response.status(400).send(err);
 		}
 		if(bars.length === 0) {
-			console.log('no bars');
 			var bars = [];
 			yelp.search({ term: 'bars', location: request.params.zip })
 				.then(function(data) {
@@ -46,6 +72,7 @@ router.get('/location/:zip', (request, response) => {
 						bar.name = data.businesses[i].name;
 						bar.image_url = data.businesses[i].image_url;
 						bar.zipCode = request.params.zip;
+						bar.mobile_url = data.businesses[i].mobile_url;
 						bar.save()
 					}
 					data.businesses.forEach(function(business){

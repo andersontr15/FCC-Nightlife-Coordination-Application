@@ -14,6 +14,10 @@ let barSchema = new Schema({
 		type: String,
 		required: true
 	},
+	mobile_url: {
+		type: String,
+		required: true
+	},
 	users: {
 		type: Array
 	}

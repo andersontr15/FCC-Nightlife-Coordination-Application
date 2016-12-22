@@ -42,22 +42,29 @@
 			vm.user = null;
 			vm.businesses = [];
 			$location.path('/');
-		}
+		};
 
 		vm.attend = function(bar) {
-			console.log(bar, bar.name);
 			$http.put('/api/location/' + bar.name, { user: vm.user })
 				 .then(function(response) {
-				 	vm.findBars(response.data.zipCode);
+				 	vm.findBars(bar.zipCode);
 				 }, function(err) {
 				 	console.log(err);
 				 })
-		}
+		};
+
+		vm.cancel = function(bar) {
+			$http.put('/api/location/leave/' + bar.name, { user: vm.user })
+				 .then(function(response) {
+				 	vm.findBars(bar.zipCode)
+				 }, function(err) {
+				 	console.log(err)
+				 });
+		};
 
 		vm.findBars = function(zip) {
 			$http.get('/api/location/' + zip)
 				 .then(function(response) {
-				 	console.log(response);
 				 	vm.businesses = response.data.businesses;
 				 }, function(err) {
 				 	console.log(err)
