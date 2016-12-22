@@ -3,29 +3,16 @@ let jwt = require('jsonwebtoken');
 let bcrypt = require('bcrypt-nodejs');
 let router = express.Router();
 let User = require('../models/user');
+let Bar = require('../models/bars');
 let Yelp = require('yelp');
 
-router.put('/update-location', (request, response) => {
-	User.findOneAndUpdate({name: request.body.name}, request.body, (err, user) => {
-		if(err) {
-			return response.status(400).send(err)
-		}
-		if(!user) {
-			return response.status(404).send('No user!');
-		}
-		var token = jwt.sign({
-			data: user
-		}, process.env.secret, { expiresIn: 3600 });
-		return response.status(200).send(token);
-	});
-});
 
 router.get('/location/:zip', (request, response) => {
 	var yelp = new Yelp({
-	  	consumer_key: 'es3aQv39bBet81yzmDY2wA',
-	  	consumer_secret: 'OnuNy18XbW5EumNjvxwlHVu6j1Q',
-	  	token: 'QhAuNYcn7vFtnwv_77u3uk59czehMyRy',
-	  	token_secret: '4kQgtt26rUtTKUt9QNgBAl4s1CA'
+	  	consumer_key: process.env.consumerKey,
+	  	consumer_secret: process.env.consumerSecret,
+	  	token: process.env.token,
+	  	token_secret: process.env.tokenSecret
 	});
 
 	yelp.search({ term: 'bars', location: request.params.zip })
